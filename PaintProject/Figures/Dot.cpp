@@ -5,12 +5,10 @@ Dot::Dot() {
 
 }
 
-Dot::Dot(int x, int y, float r, float g, float b) {
+Dot::Dot(int x, int y, Colour colour) {
     newX = x;
     newY = y;
-    newR = r;
-    newG = g;
-    newB = b;
+    this->colour_ = colour;
 }
 
 Dot::~Dot() {
@@ -25,25 +23,15 @@ int Dot::getY() {
     return newY;
 }
 
-float Dot::getR() {
-    return newR;
-}
-
-float Dot::getG() {
-    return newG;
-}
-
-float Dot::getB() {
-    return newB;
-}
-
 void Dot::setPosition(int x, int y) {
     newX = x;
     newY = y;
 }
 
-void Dot::setColour(float r, float g, float b) {
-    newR = r;
-    newG = g;
-    newB = b;
+void Dot::setColour(Colour colour) {
+    this->colour_ = colour;
+}
+
+Colour Dot::getColor() {
+    return this->colour_;
 }

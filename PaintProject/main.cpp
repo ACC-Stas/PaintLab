@@ -1,4 +1,3 @@
-
 #include <ctime>
 #include "Figures/Dot.h"
 #include <iostream>
@@ -32,13 +31,14 @@ std::list<int> undoHistory; // record for undo, maximum 20 shapes in history
 std::list<int> redoHistory; // record for redo, maximum 20 shapes in history
 std::vector<Dot> redoDots;  // store the dots after undo temporaly
 
-void display(void) {
+void display() {
     glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT);
     glPointSize(2);
     glBegin(GL_POINTS);
     for (unsigned int i = 0; i < dots.size(); i++) {
-        glColor3f(dots[i].getR(), dots[i].getG(), dots[i].getB());
+        Colour colour = dots[i].getColor();
+        glColor3f(colour.r, colour.g, colour.b);
         glVertex2i(dots[i].getX(), dots[i].getY());
     }
     glEnd();
@@ -66,48 +66,38 @@ void quit() {
 }
 
 void undo() {
-    if (undoHistory.size() > 0) {
-        if (undoHistory.back() != dots.size() && redoHistory.back() != dots.size()) {
-            redoHistory.push_back(dots.size());
-        }
-        int numRemove = dots.size() - undoHistory.back();
-        for (int i = 0; i < numRemove; i++) {
-            redoDots.push_back(dots.back());
-            dots.pop_back();
-        }
-        redoHistory.push_back(undoHistory.back());
-        undoHistory.pop_back();
-    } else {
-        time_t rawtime;
-        struct tm *timeinfo;
-        time(&rawtime);
-        timeinfo = localtime(&rawtime);
-        std::cout << asctime(timeinfo)
-                  << "[Warning] Cannot undo. This is the first record in the history.\n";
+    if (undoHistory.empty()) {
+        return;
     }
+
+    if (undoHistory.back() != dots.size() && redoHistory.back() != dots.size()) {
+        redoHistory.push_back(dots.size());
+    }
+    int numRemove = dots.size() - undoHistory.back();
+    for (int i = 0; i < numRemove; i++) {
+        redoDots.push_back(dots.back());
+        dots.pop_back();
+    }
+    redoHistory.push_back(undoHistory.back());
+    undoHistory.pop_back();
 }
 
 void redo() {
-    if (redoHistory.size() > 1) {
-        undoHistory.push_back(redoHistory.back());
-        redoHistory.pop_back();
-        int numRemove = redoHistory.back() - dots.size();
-        for (int i = 0; i < numRemove; i++) {
-            dots.push_back(redoDots.back());
-            redoDots.pop_back();
-        }
-    } else {
-        time_t rawtime;
-        struct tm *timeinfo;
-        time(&rawtime);
-        timeinfo = localtime(&rawtime);
-        std::cout << asctime(timeinfo)
-                  << "[Warning] Cannot redo. This is the last record in the history.\n";
+    if (redoHistory.size() <= 1) {
+        return;
     }
+    undoHistory.push_back(redoHistory.back());
+    redoHistory.pop_back();
+    int numRemove = redoHistory.back() - dots.size();
+    for (int i = 0; i < numRemove; i++) {
+        dots.push_back(redoDots.back());
+        redoDots.pop_back();
+    }
+
 }
 
 void drawDot(int mousex, int mousey) {
-    Dot newDot(mousex, window_h - mousey, isEraser ? 1.0 : red, isEraser ? 1.0 : green, isEraser ? 1.0 : blue);
+    Dot newDot(mousex, window_h - mousey, Colour{isEraser ? 1.0 : red, isEraser ? 1.0 : green, isEraser ? 1.0 : blue});
     dots.push_back(newDot);
 }
 
@@ -175,19 +165,17 @@ void drawLine(int x1, int y1, int x2, int y2) {
  * and the bottom-right corner specified by a second click
  */
 void drawRectangle(int x1, int y1, int x2, int y2) {
-    if (x1 < x2 && y1 < y2) {
-        drawLine(x1, y1, x2, y1);
-        drawLine(x2, y1, x2, y2);
-        drawLine(x2, y2, x1, y2);
-        drawLine(x1, y2, x1, y1);
-    } else {
-        time_t rawtime;
-        struct tm *timeinfo;
-        time(&rawtime);
-        timeinfo = localtime(&rawtime);
-        std::cout << asctime(timeinfo)
-                  << "[Warning] The first click should be the top-left corner, the second click should be bottom-right corner.\n";
+
+    if (x1 >= x2 || y1 >= y2) {
+        std::cout << "[Warning] The first click should be the top-left corner, "
+                     "the second click should be bottom-right corner.\n";
+        return;
     }
+
+    drawLine(x1, y1, x2, y1);
+    drawLine(x2, y1, x2, y2);
+    drawLine(x2, y2, x1, y2);
+    drawLine(x1, y2, x1, y1);
 }
 
 /**

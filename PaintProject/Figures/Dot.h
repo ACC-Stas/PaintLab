@@ -2,26 +2,28 @@
 #include <iostream>
 #include <string>
 
-class Dot
-{
+struct Colour {
+    double r;
+    double g;
+    double b;
+};
+
+class Dot {
 public:
     Dot();
-    Dot(int, int, float, float, float);
+    Dot(int, int, Colour);
     ~Dot();
 
     int getX();
     int getY();
-    float getR();
-    float getG();
-    float getB();
+    Colour getColor();
+
 
     void setPosition(int, int);
-    void setColour(float, float, float);
+    void setColour(Colour);
 
 private:
     int newX;
     int newY;
-    float newR;
-    float newG;
-    float newB;
+    Colour colour_;
 };
