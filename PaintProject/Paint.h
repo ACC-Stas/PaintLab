@@ -17,20 +17,6 @@ public:
 
     static void redo();
 
-    static void drawDot(int mousex, int mousey);
-
-    static void drawBrush(int x, int y);
-
-    static void drawLine(int x1, int y1, int x2, int y2);
-
-    static void drawRectangle(int x1, int y1, int x2, int y2);
-
-    static void drawCircle(int x1, int y1, int x2, int y2);
-
-    static void drawRadialBrush(int x, int y);
-
-    static void erase(int x, int y);
-
     static void mouse(int bin, int state, int x, int y);
 
     static void motion(int x, int y);
@@ -47,7 +33,7 @@ public:
 
     static void processEraserSizeMenu(int value);
 
-    static void processRadicalBrushMenu(int value);
+    static void processSizeMenu(int value);
 
     static void createOurMenu();
 
@@ -63,22 +49,17 @@ public:
 
 
 private:
-    static float red, green, blue;
     static int tmpx, tmpy; // store the first point when shape is line, rectangle or circle
-    static int brushSize;
-    static int eraserSize;
     static bool isSecond;
     static bool isRandom;
-    static bool isEraser;
-    static bool isRadial;
     static float window_w;
     static float window_h;
-    static int shape;
 
     static std::vector<Dot> dots;        // store all the points until clear
     static std::list<int> undoHistory; // record for undo, maximum 20 shapes in history
     static std::list<int> redoHistory; // record for redo, maximum 20 shapes in history
     static std::vector<Dot> redoDots;  // store the dots after undo temporaly
+    static std::vector<Dot> tempDots;
 
     static Drawer drawer;
 };
