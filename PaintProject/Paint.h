@@ -2,11 +2,17 @@
 
 #include <vector>
 #include <list>
+#include <unordered_map>
 #include "Figures/Dot.h"
 #include "Drawer.h"
 
 class Paint {
 public:
+    static void start(int argc, char **argv);
+
+
+private:
+
     static void display();
 
     static void clear();
@@ -29,6 +35,8 @@ public:
 
     static void processColourMenu(int value);
 
+    static void processColourMain(int value);
+
     static void processShapeMenu(int value);
 
     static void processEraserSizeMenu(int value);
@@ -45,21 +53,20 @@ public:
 
     static void callbackInit();
 
-    static void start(int argc, char **argv);
-
-
-private:
-    static int tmpx, tmpy; // store the first point when shape is line, rectangle or circle
-    static bool isSecond;
-    static bool isRandom;
+    static int tmp_x, tmp_y; // store the first point when shape is line, rectangle or circle
+    static bool is_second;
+    static bool is_random;
+    static bool is_polyline;
     static float window_w;
     static float window_h;
 
     static std::vector<Dot> dots;        // store all the points until clear
-    static std::list<int> undoHistory; // record for undo, maximum 20 shapes in history
-    static std::list<int> redoHistory; // record for redo, maximum 20 shapes in history
-    static std::vector<Dot> redoDots;  // store the dots after undo temporaly
-    static std::vector<Dot> tempDots;
+    static std::list<int> undo_history;
+    static std::list<int> redo_history;
+    static std::vector<Dot> redo_dots;  // store the dots after undo temporaly
+    static std::vector<Dot> temp_dots;
+
+    static std::unordered_map<int, Dot> matrix;
 
     static Drawer drawer;
 };

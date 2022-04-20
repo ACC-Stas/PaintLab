@@ -28,5 +28,11 @@ std::vector<Dot> Rectangle::draw(Dot dot1, Dot dot2) {
     result.insert(result.end(), points3.begin(), points3.end());
     result.insert(result.end(), points4.begin(), points4.end());
 
+    for (int x = left_up.getX() + this->line_width_; x < right_up.getX() - this->line_width_; x += 3) {
+        for (int y = left_down.getY() + this->line_width_; y < left_up.getY() - this->line_width_; y += 3) {
+            result.emplace_back(x, y, this->main_colour_);
+        }
+    }
+
     return result;
 }

@@ -11,8 +11,8 @@
 void Paint::start(int argc, char **argv) {
     drawer.setLineColour({1, 0, 0});
     drawer.setMainColour({0, 0, 0});
-    isSecond = false;
-    isRandom = false;
+    is_second = false;
+    is_random = false;
     window_w = 1920;
     window_h = 1080;
 
@@ -39,15 +39,15 @@ void Paint::callbackInit() {
 void Paint::passiveMouse(int x, int y) {
     y = window_h - y;
 
-    tempDots.clear();
+    temp_dots.clear();
 
-    if (drawer.isOneClickable() || !isSecond) {
+    if (drawer.isOneClickable() || !is_second) {
         return;
     }
-    Dot tmp = Dot{tmpx, tmpy, Colour{0, 0, 0}};
+    Dot tmp = Dot{tmp_x, tmp_y, Colour{0, 0, 0}};
     Dot current = Dot(x, y, Colour{0, 0, 0});
     auto points = drawer.draw(tmp, current);
-    tempDots.insert(tempDots.end(), points.begin(), points.end());
+    temp_dots.insert(temp_dots.end(), points.begin(), points.end());
 }
 
 void Paint::FPS(int val) {
@@ -75,6 +75,14 @@ void Paint::createOurMenu() {
     glutAddMenuEntry("Yellow", 5);
     glutAddMenuEntry("Random", 6);
 
+    int colourMenuMain = glutCreateMenu(processColourMain);
+    glutAddMenuEntry("Red", 1);
+    glutAddMenuEntry("Green", 2);
+    glutAddMenuEntry("Blue", 3);
+    glutAddMenuEntry("Purple", 4);
+    glutAddMenuEntry("Yellow", 5);
+    glutAddMenuEntry("Random", 6);
+
     int sizeMenuBrush = glutCreateMenu(processBrushSizeMenu);
     glutAddMenuEntry("4px", 4);
     glutAddMenuEntry("8px", 8);
@@ -87,6 +95,7 @@ void Paint::createOurMenu() {
     glutAddMenuEntry("Rectangle", 3);
     glutAddMenuEntry("Ellipse", 4);
     glutAddSubMenu("Airbrush", sizeMenuBrush);
+    glutAddMenuEntry("Poly line", 5);
 
     int eraserSizeMenu = glutCreateMenu(processEraserSizeMenu);
     glutAddMenuEntry("Small", 2);
@@ -101,7 +110,8 @@ void Paint::createOurMenu() {
     glutAddMenuEntry("20px", 20);
 
     int main_id = glutCreateMenu(processMainMenu);
-    glutAddSubMenu("Colour", colourMenu);
+    glutAddSubMenu("Line Colour", colourMenu);
+    glutAddSubMenu("Inner Colour", colourMenuMain);
     glutAddSubMenu("Shapes", shapeMenu);
     glutAddSubMenu("Size", sizeMenu);
     glutAddSubMenu("Eraser", eraserSizeMenu);
@@ -119,12 +129,18 @@ void Paint::processEraserSizeMenu(int value) {
 }
 
 void Paint::processShapeMenu(int value) {
+    is_polyline = false;
+    if (value == 5) {
+        is_polyline = true;
+        value = 2;
+    }
+
     drawer.setDrawer(DrawerNames(value));
 }
 
 void Paint::processColourMenu(int value) {
-    isSecond = false;
-    isRandom = false;
+    is_second = false;
+    is_random = false;
 
     switch (value) {
         case 1: // red
@@ -143,7 +159,7 @@ void Paint::processColourMenu(int value) {
             drawer.setLineColour(Colour{1.0, 1.0, 0});
             break;
         case 6: // random
-            isRandom = true;
+            is_random = true;
             break;
         default:
             break;
@@ -204,7 +220,7 @@ void Paint::mouse(int bin, int state, int x, int y) {
 
     y = window_h - y;
 
-    if (isRandom) {
+    if (is_random) {
         srand(time(NULL));
 
         float red = float(rand()) / float(RAND_MAX);
@@ -214,63 +230,63 @@ void Paint::mouse(int bin, int state, int x, int y) {
         drawer.setLineColour(Colour{red, green, blue});
     }
 
-    if (undoHistory.size() > 20) {
-        undoHistory.pop_front();
-    }
-
     if (drawer.isOneClickable()) {
-        undoHistory.push_back(dots.size());
+        undo_history.push_back(dots.size());
         auto points = drawer.draw(Dot(x, y, Colour{0, 0, 0}), Dot(x, y, Colour{0, 0, 0}));
         dots.insert(dots.end(), points.begin(), points.end());
 
         return;
     }
 
-    if (!isSecond) {
-        tmpx = x;
-        tmpy = y;
-        isSecond = true;
+    if (!is_second) {
+        tmp_x = x;
+        tmp_y = y;
+        is_second = true;
+
+        return;
+    }
+
+    undo_history.push_back(dots.size());
+    auto points = drawer.draw(Dot(tmp_x, tmp_y, Colour{0, 0, 0}), Dot(x, y, Colour{0, 0, 0}));
+    dots.insert(dots.end(), points.begin(), points.end());
+
+    if (is_polyline) {
+        tmp_x = x;
+        tmp_y = y;
     } else {
-        if (undoHistory.back() != dots.size()) {
-            undoHistory.push_back(dots.size());
-        }
-
-        auto points = drawer.draw(Dot(tmpx, tmpy, Colour{0, 0, 0}), Dot(x, y, Colour{0, 0, 0}));
-        dots.insert(dots.end(), points.begin(), points.end());
-
-        isSecond = false;
+        is_second = false;
     }
 }
 
 void Paint::redo() {
-    if (redoHistory.size() <= 1) {
+    if (redo_history.size() <= 1) {
         return;
     }
-    undoHistory.push_back(redoHistory.back());
-    redoHistory.pop_back();
-    int numRemove = redoHistory.back() - dots.size();
+    undo_history.push_back(redo_history.back());
+    redo_history.pop_back();
+    int numRemove = redo_history.back() - dots.size();
     for (int i = 0; i < numRemove; i++) {
-        dots.push_back(redoDots.back());
-        redoDots.pop_back();
+        dots.push_back(redo_dots.back());
+        redo_dots.pop_back();
     }
 
 }
 
 void Paint::undo() {
-    if (undoHistory.empty()) {
+    if (undo_history.empty()) {
         return;
     }
 
-    if (undoHistory.back() != dots.size() && redoHistory.back() != dots.size()) {
-        redoHistory.push_back(dots.size());
+    if (undo_history.back() != dots.size() && redo_history.back() != dots.size()) {
+        redo_history.push_back(dots.size());
     }
-    int numRemove = dots.size() - undoHistory.back();
+    int numRemove = dots.size() - undo_history.back();
     for (int i = 0; i < numRemove; i++) {
-        redoDots.push_back(dots.back());
+        redo_dots.push_back(dots.back());
         dots.pop_back();
     }
-    redoHistory.push_back(undoHistory.back());
-    undoHistory.pop_back();
+    redo_history.push_back(undo_history.back());
+    undo_history.pop_back();
 }
 
 void Paint::quit() {
@@ -279,9 +295,9 @@ void Paint::quit() {
 
 void Paint::clear() {
     dots.clear();
-    undoHistory.clear();
-    redoDots.clear();
-    redoHistory.clear();
+    undo_history.clear();
+    redo_dots.clear();
+    redo_history.clear();
     glClear(GL_COLOR_BUFFER_BIT);
     glutSwapBuffers();
 }
@@ -297,7 +313,7 @@ void Paint::display() {
         glVertex2i(dot.getX(), dot.getY());
     }
 
-    for (auto &dot: tempDots) {
+    for (auto &dot: temp_dots) {
         Colour colour = dot.getColor();
         glColor3f(colour.r, colour.g, colour.b);
         glVertex2i(dot.getX(), dot.getY());
@@ -310,17 +326,47 @@ void Paint::processSizeMenu(int value) {
     drawer.setLineWidth(value);
 }
 
+void Paint::processColourMain(int value) {
+    is_second = false;
+    is_random = false;
 
-int Paint::tmpx, Paint::tmpy; // store the first point when shape is line, rectangle or circle
-bool Paint::isSecond;
-bool Paint::isRandom;
+    switch (value) {
+        case 1: // red
+            drawer.setMainColour(Colour{1, 0, 0});
+            break;
+        case 2: // green
+            drawer.setMainColour(Colour{0, 1, 0});
+            break;
+        case 3: // blue
+            drawer.setMainColour(Colour{0, 0, 1});
+            break;
+        case 4: // purple
+            drawer.setMainColour(Colour{0.5, 0, 0.5});
+            break;
+        case 5: // yellow
+            drawer.setMainColour(Colour{1.0, 1.0, 0});
+            break;
+        case 6: // random
+            is_random = true;
+            break;
+        default:
+            break;
+    }
+}
+
+int Paint::tmp_x, Paint::tmp_y; // store the first point when shape is line, rectangle or circle
+bool Paint::is_second;
+bool Paint::is_random;
+bool Paint::is_polyline;
 float Paint::window_w;
 float Paint::window_h;
 
 std::vector<Dot> Paint::dots;        // store all the points until clear
-std::list<int> Paint::undoHistory; // record for undo, maximum 20 shapes in history
-std::list<int> Paint::redoHistory; // record for redo, maximum 20 shapes in history
-std::vector<Dot> Paint::redoDots;  // store the dots after undo temporaly
-std::vector<Dot> Paint::tempDots;
+std::list<int> Paint::undo_history; // record for undo, maximum 20 shapes in history
+std::list<int> Paint::redo_history; // record for redo, maximum 20 shapes in history
+std::vector<Dot> Paint::redo_dots;  // store the dots after undo temporaly
+std::vector<Dot> Paint::temp_dots;
+
+std::unordered_map<int, Dot> Paint::matrix;
 
 Drawer Paint::drawer;
