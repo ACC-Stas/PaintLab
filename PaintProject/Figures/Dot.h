@@ -23,7 +23,7 @@ public:
     void setColour(Colour);
 
 private:
-    int newX;
-    int newY;
+    int x_;
+    int y_;
     Colour colour_;
 };

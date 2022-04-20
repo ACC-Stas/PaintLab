@@ -6,8 +6,8 @@ Dot::Dot() {
 }
 
 Dot::Dot(int x, int y, Colour colour) {
-    newX = x;
-    newY = y;
+    x_ = x;
+    y_ = y;
     this->colour_ = colour;
 }
 
@@ -16,16 +16,16 @@ Dot::~Dot() {
 }
 
 int Dot::getX() {
-    return newX;
+    return x_;
 }
 
 int Dot::getY() {
-    return newY;
+    return y_;
 }
 
 void Dot::setPosition(int x, int y) {
-    newX = x;
-    newY = y;
+    x_ = x;
+    y_ = y;
 }
 
 void Dot::setColour(Colour colour) {
