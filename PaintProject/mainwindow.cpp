@@ -124,7 +124,14 @@ void MainWindow::on_make_figure_button_clicked() {
 void MainWindow::on_figure_types_list_activated(const QString &arg1) {
     figure_type = FigureTypeConverter::FromStr(arg1.toStdString());
 
+    scene->setIsPolyline(false);
+    scene->setIsPolygon(false);
+
     if (figure_type == FigureType::polyline) {
         scene->setIsPolyline(true);
+    }
+
+    if (figure_type == FigureType::polygon) {
+        scene->setIsPolygon(true);
     }
 }

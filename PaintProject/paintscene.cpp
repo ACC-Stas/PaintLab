@@ -11,6 +11,9 @@ PaintScene::PaintScene(FigureType *figureType, QComboBox *box, QObject *parent) 
     copy = false;
     is_selected = false;
     is_polyline = false;
+
+    is_polygon = false;
+    points_ = std::vector<QPointF>();
 }
 
 PaintScene::~PaintScene() {
@@ -62,9 +65,16 @@ bool PaintScene::getIsPolyline() const {
     return is_polyline;
 }
 
-void PaintScene::setIsPolyline(bool value)
-{
+void PaintScene::setIsPolyline(bool value) {
     is_polyline = value;
+}
+
+bool PaintScene::getIs_polygon() const {
+    return is_polygon;
+}
+
+void PaintScene::setIsPolygon(bool value) {
+    is_polygon = value;
 }
 
 void PaintScene::undo() {
@@ -106,7 +116,7 @@ void PaintScene::deleteFigure(QString figureName, QString *prevFigure) {
     is_selected = false;
 }
 
-std::vector<IFigure*>* PaintScene::getFigures() {
+std::vector<std::unique_ptr<IFigure>>* PaintScene::getFigures() {
     return &figures;
 }
 
@@ -155,6 +165,40 @@ void PaintScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
         return;
     }
 
+    if (is_polygon) {
+        if (event->button() == Qt::LeftButton) {
+            points_.push_back(event->scenePos());
+            return;
+        }
+
+        if (event->button() == Qt::RightButton) {
+            figures.push_back(std::move(temp_figures.back()));
+            temp_figures.clear();
+            points_.clear();
+
+            box->addItem(QString("figure" + QString::number(figures.size())));
+            updateScene();
+            copy = false;
+
+            if (!redo_figures.empty()) {
+                redo_figures.clear();
+            }
+
+            return;
+        }
+
+        if (event->button() == Qt::RightButton && isSecond){
+            temp_figures.clear();
+            updateScene();
+            isSecond = false;
+            copy = false;
+
+            return;
+        }
+
+        return;
+    }
+
     if (event->button() == Qt::LeftButton && (isSecond || copy)){
         figures.push_back(std::move(temp_figures.back()));
         temp_figures.clear();
@@ -190,21 +234,39 @@ void PaintScene::mousePressEvent(QGraphicsSceneMouseEvent *event) {
 
 void PaintScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
     temp_figures.clear();
-    if(isSecond) {
-        temp_figures.push_back(Factory::createFigure(previous_point, event->scenePos(), line_color, fill_color, width, *figure_type));
-        updateScene();
-    }
+
     if(copy) {
         std::regex number_regex("(\\d+)");
         std::string text = box->currentText().toStdString();
         auto it = std::sregex_token_iterator(text.cbegin(), text.cend(), number_regex, 1);
         int figureNumber = std::stoi(*it) - 1;
 
-        auto width = figures.at(figureNumber)->getPoint2().x() - figures.at(figureNumber)->getPoint1().x();
-        auto height = figures.at(figureNumber)->getPoint2().y() - figures.at(figureNumber)->getPoint1().y();
-        QPointF point(event->scenePos().x() + width, event->scenePos().y() + height);
-        temp_figures.push_back(Factory::createFigure(event->scenePos(), point, figures.at(figureNumber)->getTempLineColor(),
-                                                     figures.at(figureNumber)->getFillColor(), figures.at(figureNumber)->getWidth(), figures.at(figureNumber)->getFigureType()));
+        auto points = figures.at(figureNumber)->points;
+        auto end_point = points.back();
+
+        auto x_shift = end_point.x() - event->scenePos().x();
+        auto y_shift = end_point.y() - event->scenePos().y();
+
+        for (auto& point : points) {
+            point.setX(point.x() - x_shift);
+            point.setY(point.y() - y_shift);
+        }
+
+        temp_figures.push_back(std::unique_ptr<IFigure>(Factory::createFigure(points, figures.at(figureNumber)->getTempLineColor(),
+                                                     figures.at(figureNumber)->getFillColor(), figures.at(figureNumber)->getWidth(), figures.at(figureNumber)->getFigureType())));
+        updateScene();
+        return;
+    }
+
+    if(isSecond) {
+        temp_figures.push_back(std::unique_ptr<IFigure>(Factory::createFigure({previous_point, event->scenePos()}, line_color, fill_color, width, *figure_type)));
+        updateScene();
+    }
+
+    if (is_polygon && points_.size() > 1) {
+        auto temp_points = points_;
+        temp_points.push_back(event->scenePos());
+        temp_figures.push_back(std::unique_ptr<IFigure>(Factory::createFigure(temp_points, line_color, fill_color, width, *figure_type)));
         updateScene();
     }
 }

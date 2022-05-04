@@ -1,8 +1,7 @@
 #include "line.h"
 
-Line::Line(QPointF point1, QPointF point2, QColor lineColor, QColor fillColor, int width) {
-    this->point1 = point1;
-    this->point2 = point2;
+Line::Line(std::vector<QPointF> points, QColor lineColor, QColor fillColor, int width) {
+    this->points = points;
     this->line_color = lineColor;
     this->fill_color = fillColor;
     this->width = width;
@@ -14,7 +13,7 @@ QGraphicsItem* Line::draw() {
     QPen pen;
     pen.setColor(line_color);
     pen.setWidth(width);
-    QGraphicsLineItem* line = new QGraphicsLineItem(point1.x(), point1.y(), point2.x(), point2.y());
+    QGraphicsLineItem* line = new QGraphicsLineItem(points[0].x(), points[0].y(), points[1].x(), points[1].y());
     line->setPen(pen);
     return line;
 }

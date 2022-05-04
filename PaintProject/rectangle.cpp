@@ -1,9 +1,8 @@
 #include "rectangle.h"
 
-Rectangle::Rectangle(QPointF point1, QPointF point2, QColor line_color, QColor fill_color, int width)
+Rectangle::Rectangle(std::vector<QPointF> points, QColor line_color, QColor fill_color, int width)
 {
-    this->point1 = point1;
-    this->point2 = point2;
+    this->points = points;
     this->line_color = line_color;
     this->fill_color = fill_color;
     this->width = width;
@@ -16,7 +15,7 @@ QGraphicsItem* Rectangle::draw() {
     pen.setColor(line_color);
     pen.setWidth(width);
 
-    QGraphicsPolygonItem* rectangle = new QGraphicsPolygonItem(QPolygonF(QRectF(point1, point2)));
+    QGraphicsPolygonItem* rectangle = new QGraphicsPolygonItem(QPolygonF(QRectF(points[0], points[1])));
     rectangle->setPen(pen);
     if(fill_color != QColor(1, 1, 1)){
         rectangle->setBrush(QBrush(fill_color));

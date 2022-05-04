@@ -9,7 +9,7 @@
 
 class Factory {
 public:
-    static IFigure* createFigure(QPointF point1, QPointF point2, QColor lineColor, QColor fillColor, int width, FigureType figureType);
+    static IFigure* createFigure(std::vector<QPointF> points, QColor lineColor, QColor fillColor, int width, FigureType figureType);
 
 };
 

@@ -8,7 +8,7 @@
 
 class Line : public IFigure {
 public:
-    Line(QPointF point1, QPointF point2, QColor line_color, QColor fill_color, int width);
+    Line(std::vector<QPointF> points, QColor line_color, QColor fill_color, int width);
     QGraphicsItem* draw() override;
 };
 

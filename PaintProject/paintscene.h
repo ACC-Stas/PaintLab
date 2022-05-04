@@ -7,6 +7,8 @@
 #include <QComboBox>
 #include <iterator>
 #include <string>
+#include <vector>
+#include <memory>
 
 class PaintScene : public QGraphicsScene {
 
@@ -19,7 +21,7 @@ public:
     void redo();
     void deleteFigure(QString figureName, QString* prevFigure);
 
-    std::vector<IFigure*>* getFigures();
+    std::vector<std::unique_ptr<IFigure>>* getFigures();
 
     int getWidth() const;
     void setWidth(int value);
@@ -40,12 +42,15 @@ public:
     bool getIsPolyline() const;
     void setIsPolyline(bool value);
 
+    bool getIs_polygon() const;
+    void setIsPolygon(bool value);
+
 private:
     QPointF previous_point;
     bool isSecond;
-    std::vector<IFigure*> figures;
-    std::vector<IFigure*> temp_figures;
-    std::vector<IFigure*> redo_figures;
+    std::vector<std::unique_ptr<IFigure>> figures;
+    std::vector<std::unique_ptr<IFigure>> temp_figures;
+    std::vector<std::unique_ptr<IFigure>> redo_figures;
     QColor line_color;
     QColor fill_color;
     int width;
@@ -54,6 +59,8 @@ private:
     bool copy;
     bool is_selected;
     bool is_polyline;
+    bool is_polygon;
+    std::vector<QPointF> points_;
 
     void mousePressEvent(QGraphicsSceneMouseEvent * event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);

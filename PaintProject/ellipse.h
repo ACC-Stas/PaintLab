@@ -10,7 +10,7 @@
 class Ellipse : public IFigure
 {
 public:
-    Ellipse(QPointF point1, QPointF point2, QColor line_color, QColor fill_color, int width);
+    Ellipse(std::vector<QPointF> points, QColor line_color, QColor fill_color, int width);
     QGraphicsItem* draw() override;
 };
 

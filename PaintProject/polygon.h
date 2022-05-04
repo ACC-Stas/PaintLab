@@ -8,7 +8,7 @@
 
 class Polygon : public IFigure {
 public:
-    Polygon(QPointF point1, QPointF point2, QColor line_color, QColor fill_color, int width);
+    Polygon(std::vector<QPointF> points, QColor line_color, QColor fill_color, int width);
     QGraphicsItem* draw() override;
 };
 

@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "paintscene.h"
+#include "figuretype.h"
 
 namespace Ui {
 class MakeFigure;
@@ -32,6 +33,9 @@ private slots:
 private:
     Ui::MakeFigure *ui;
     PaintScene* scene;
+    QPointF current_point;
+    FigureType type;
+    std::vector<QPointF> points;
 };
 
 #endif // MAKEFIGURE_H
