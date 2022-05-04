@@ -9,7 +9,7 @@
 class Rectangle : public IFigure
 {
 public:
-    Rectangle(QPointF point1, QPointF point2, QColor line_color, QColor fill_color, int width, int figure_type);
+    Rectangle(QPointF point1, QPointF point2, QColor line_color, QColor fill_color, int width);
     QGraphicsItem* draw() override;
 };
 

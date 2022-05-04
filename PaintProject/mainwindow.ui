@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1016</width>
-    <height>637</height>
+    <width>1024</width>
+    <height>561</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,7 +17,7 @@
    <widget class="QGraphicsView" name="graphicsView">
     <property name="geometry">
      <rect>
-      <x>10</x>
+      <x>0</x>
       <y>30</y>
       <width>1001</width>
       <height>561</height>
@@ -27,7 +27,7 @@
      <bool>true</bool>
     </property>
    </widget>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -60,13 +60,36 @@
      </item>
     </layout>
    </widget>
+   <widget class="QPushButton" name="make_figure_button">
+    <property name="geometry">
+     <rect>
+      <x>910</x>
+      <y>0</y>
+      <width>89</width>
+      <height>25</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Make Figure</string>
+    </property>
+   </widget>
+   <widget class="QComboBox" name="figure_types_list">
+    <property name="geometry">
+     <rect>
+      <x>520</x>
+      <y>0</y>
+      <width>86</width>
+      <height>25</height>
+     </rect>
+    </property>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1016</width>
+     <width>1024</width>
      <height>22</height>
     </rect>
    </property>
@@ -95,16 +118,6 @@
     <addaction name="actionGreen_2"/>
     <addaction name="actionBlue_2"/>
    </widget>
-   <widget class="QMenu" name="menuFigure">
-    <property name="title">
-     <string>Figure</string>
-    </property>
-    <addaction name="actionLine"/>
-    <addaction name="actionRectangle"/>
-    <addaction name="actionEllipse"/>
-    <addaction name="actionPolygon"/>
-    <addaction name="actionPolyline"/>
-   </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="title">
      <string>Edit</string>
@@ -115,7 +128,6 @@
    <addaction name="menuColor"/>
    <addaction name="menuFill_color"/>
    <addaction name="menuWidth"/>
-   <addaction name="menuFigure"/>
    <addaction name="menuEdit"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>

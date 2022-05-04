@@ -1,13 +1,13 @@
 #include "line.h"
 
-Line::Line(QPointF point1, QPointF point2, QColor lineColor, QColor fillColor, int width, int figureType) {
+Line::Line(QPointF point1, QPointF point2, QColor lineColor, QColor fillColor, int width) {
     this->point1 = point1;
     this->point2 = point2;
     this->line_color = lineColor;
     this->fill_color = fillColor;
     this->width = width;
-    base_line_color = lineColor;
-    this->figure_type = figureType;
+    this->base_line_color = lineColor;
+    this->figure_type = FigureType::line;
 }
 
 QGraphicsItem* Line::draw() {

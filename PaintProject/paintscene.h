@@ -8,14 +8,13 @@
 #include <iterator>
 #include <string>
 
-class paintScene : public QGraphicsScene
-{
+class PaintScene : public QGraphicsScene {
 
     Q_OBJECT
 
 public:
-    explicit paintScene(int *figureType, QComboBox *box, QObject *parent = 0);
-    ~paintScene();
+    explicit PaintScene(FigureType *figure_type, QComboBox *box, QObject *parent = 0);
+    ~PaintScene();
     void undo();
     void redo();
     void deleteFigure(QString figureName, QString* prevFigure);
@@ -42,23 +41,24 @@ public:
     void setIsPolyline(bool value);
 
 private:
-    QPointF previousPoint;
+    QPointF previous_point;
     bool isSecond;
     std::vector<IFigure*> figures;
-    std::vector<IFigure*> tempFigures;
-    std::vector<IFigure*> redoFigures;
-    QColor lineColor;
-    QColor fillColor;
+    std::vector<IFigure*> temp_figures;
+    std::vector<IFigure*> redo_figures;
+    QColor line_color;
+    QColor fill_color;
     int width;
-    int *figureType;
+    FigureType *figure_type;
     QComboBox *box;
     bool copy;
-    bool isSelected;
-    bool isPolyline;
+    bool is_selected;
+    bool is_polyline;
 
     void mousePressEvent(QGraphicsSceneMouseEvent * event);
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
+    friend class MakeFigure;
 };
 
 #endif // PAINTSCENE_H

@@ -3,14 +3,14 @@
 
 #pragma once
 #include <memory>
-#include <line.h>
-#include <rectangle.h>
-#include <ellipse.h>
-#include <polygon.h>
+#include "ifigure.h"
+#include "unordered_map"
+#include "figuretype.h"
 
-class factory {
+class Factory {
 public:
-    static IFigure* createFigure(QPointF point1, QPointF point2, QColor lineColor, QColor fillColor, int width, int figureType);
+    static IFigure* createFigure(QPointF point1, QPointF point2, QColor lineColor, QColor fillColor, int width, FigureType figureType);
+
 };
 
 #endif // FACTORY_H

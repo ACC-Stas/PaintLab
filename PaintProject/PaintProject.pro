@@ -18,9 +18,11 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     ellipse.cpp \
     factory.cpp \
+    figuretype.cpp \
     line.cpp \
     main.cpp \
     mainwindow.cpp \
+    makefigure.cpp \
     paintscene.cpp \
     polygon.cpp \
     rectangle.cpp
@@ -28,15 +30,18 @@ SOURCES += \
 HEADERS += \
     ellipse.h \
     factory.h \
+    figuretype.h \
     ifigure.h \
     line.h \
     mainwindow.h \
+    makefigure.h \
     paintscene.h \
     polygon.h \
     rectangle.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    makefigure.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

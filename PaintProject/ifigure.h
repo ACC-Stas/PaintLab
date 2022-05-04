@@ -2,6 +2,7 @@
 #define IFIGURE_H
 
 #include <QGraphicsItem>
+#include "figuretype.h"
 
 class IFigure {
 protected:
@@ -11,7 +12,8 @@ protected:
     QColor base_line_color;
     QColor fill_color;
     int width;
-    int figure_type;
+    FigureType figure_type;
+
 public:
     virtual QGraphicsItem* draw() = 0;
     virtual ~IFigure() = default;
@@ -45,7 +47,7 @@ public:
     virtual void setPoint2(const QPointF &value) {
         point2 = value;
     }
-    virtual int getFigureType() const {
+    virtual FigureType getFigureType() const {
         return figure_type;
     }
     virtual QColor getFillColor() const {

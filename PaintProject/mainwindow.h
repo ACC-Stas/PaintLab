@@ -5,6 +5,9 @@
 #include "ifigure.h"
 #include <QGraphicsView>
 #include <paintscene.h>
+#include <makefigure.h>
+#include "figuretype.h"
+#include <memory>
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -53,18 +56,15 @@ private slots:
 
     void on_actionBlue_2_triggered();
 
-    void on_actionEllipse_triggered();
+    void on_make_figure_button_clicked();
 
-    void on_actionRectangle_triggered();
-
-    void on_actionPolygon_triggered();
-
-    void on_actionPolyline_triggered();
+    void on_figure_types_list_activated(const QString &arg1);
 
 private:
     Ui::MainWindow *ui;
-    paintScene *scene;
-    int figure_type;
+    std::unique_ptr<MakeFigure> figure_window;
+    PaintScene *scene;
+    FigureType figure_type;
     QString selected_figure;
     QString previous_figure;
 };

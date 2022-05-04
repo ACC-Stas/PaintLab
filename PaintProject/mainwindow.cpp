@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "makefigure.h"
 #include "ui_mainwindow.h"
 #include <regex>
 
@@ -7,10 +8,15 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    figure_type = 1;
-    scene = new paintScene(&figure_type, ui->comboBox);
+    figure_type = FigureType::line;
+    scene = new PaintScene(&figure_type, ui->comboBox);
     scene->setSceneRect(0,0, ui->graphicsView->width() - 20, ui->graphicsView->height() - 20);
     ui->graphicsView->setScene(scene);
+
+    figure_window = std::unique_ptr<MakeFigure> (new MakeFigure(scene));
+    for (const auto& type : FigureTypeConverter::all) {
+        ui->figure_types_list->addItem(QString::fromStdString(FigureTypeConverter::ToStr(type)));
+    }
 }
 
 MainWindow::~MainWindow() {
@@ -19,7 +25,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::on_actionLine_triggered() {
-    figure_type = 1;
+    figure_type = FigureType::line;
 }
 
 void MainWindow::on_actionUndo_triggered() {
@@ -110,19 +116,15 @@ void MainWindow::on_actionBlue_2_triggered() {
     scene->setFillColor(QColor(0, 0, 255));
 }
 
-void MainWindow::on_actionEllipse_triggered() {
-    figure_type = 3;
+void MainWindow::on_make_figure_button_clicked() {
+    figure_window = std::unique_ptr<MakeFigure>(new MakeFigure(scene));
+    figure_window->show();
 }
 
-void MainWindow::on_actionRectangle_triggered() {
-    figure_type = 2;
-}
+void MainWindow::on_figure_types_list_activated(const QString &arg1) {
+    figure_type = FigureTypeConverter::FromStr(arg1.toStdString());
 
-void MainWindow::on_actionPolygon_triggered() {
-    figure_type = 4;
-}
-
-void MainWindow::on_actionPolyline_triggered() {
-    scene->setIsPolyline(true);
-    figure_type = 1;
+    if (figure_type == FigureType::polyline) {
+        scene->setIsPolyline(true);
+    }
 }
