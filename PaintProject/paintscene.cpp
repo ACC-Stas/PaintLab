@@ -1,4 +1,5 @@
 #include "paintscene.h"
+#include <regex>
 
 paintScene::paintScene(int *figureType, QComboBox *box, QObject *parent) : QGraphicsScene(parent) {
     lineColor.setRgb(0, 0, 0);
@@ -81,16 +82,22 @@ void paintScene::redo() {
         figures.push_back(std::move(redoFigures.back()));
         redoFigures.pop_back();
         updateScene();
-        box->addItem(QString("figure" + QString::number(figures.size())));
+        box->addItem(QString("figure " + QString::number(figures.size())));
     }
 }
 
 void paintScene::deleteFigure(QString figureName, QString *prevFigure) {
     auto iter = figures.begin();
-    int i;
-    for(i = 0; i < (figureName.toStdString().back() - '0') - 1; i++){
+
+    std::regex number_regex("(\\d+)");
+    std::string text = figureName.toStdString();
+    auto it = std::sregex_token_iterator(text.cbegin(), text.cend(), number_regex, 1);
+    int figureNumber = std::stoi(*it) - 1;
+
+    for(int i = 0; i < figureNumber; i++){
         iter++;
     }
+
     (*iter)->setLineColor((*iter)->getTempLineColor());
     redoFigures.push_back(std::move(*iter));
     figures.erase(iter);
@@ -189,7 +196,11 @@ void paintScene::mouseMoveEvent(QGraphicsSceneMouseEvent *event) {
         updateScene();
     }
     if(copy) {
-        int figureNumber = box->currentText().toStdString().back() - '0' - 1;
+        std::regex number_regex("(\\d+)");
+        std::string text = box->currentText().toStdString();
+        auto it = std::sregex_token_iterator(text.cbegin(), text.cend(), number_regex, 1);
+        int figureNumber = std::stoi(*it) - 1;
+
         auto width = figures.at(figureNumber)->getPoint2().x() - figures.at(figureNumber)->getPoint1().x();
         auto height = figures.at(figureNumber)->getPoint2().y() - figures.at(figureNumber)->getPoint1().y();
         QPointF point(event->scenePos().x() + width, event->scenePos().y() + height);

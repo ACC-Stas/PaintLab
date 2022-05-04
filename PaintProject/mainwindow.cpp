@@ -1,13 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <regex>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow) {
     ui->setupUi(this);
 
-    figureType = 1;
-    scene = new paintScene(&figureType, ui->comboBox);
+    figure_type = 1;
+    scene = new paintScene(&figure_type, ui->comboBox);
     scene->setSceneRect(0,0, ui->graphicsView->width() - 20, ui->graphicsView->height() - 20);
     ui->graphicsView->setScene(scene);
 }
@@ -18,7 +19,7 @@ MainWindow::~MainWindow() {
 }
 
 void MainWindow::on_actionLine_triggered() {
-    figureType = 1;
+    figure_type = 1;
 }
 
 void MainWindow::on_actionUndo_triggered() {
@@ -31,20 +32,35 @@ void MainWindow::on_actionRedo_triggered() {
 
 void MainWindow::on_comboBox_activated(const QString &arg1) {
     scene->setIsSelected(true);
-    selectedFigure = arg1;
+    selected_figure = arg1;
     auto temp = scene->getFigures();
 
-    if(prevFigure.size() != 0 ) {
-        temp->at(prevFigure.toStdString().back() - '0' - 1)->setLineColor(temp->at(prevFigure.toStdString().back() - '0' - 1)->getTempLineColor());
+    if(previous_figure.size() != 0 ) {
+
+        std::regex number_regex("(\\d+)");
+        std::string text = previous_figure.toStdString();
+        auto it = std::sregex_token_iterator(text.cbegin(), text.cend(), number_regex, 1);
+        int figureNumber = std::stoi(*it) - 1;
+
+
+        temp->at(figureNumber)->setLineColor(temp->at(figureNumber)->getTempLineColor());
     }
-    prevFigure = selectedFigure;
-    temp->at((selectedFigure.toStdString().back() - '0') - 1)->setLineColor(QColor(24,167,181));
+    previous_figure = selected_figure;
+
+
+    std::regex number_regex("(\\d+)");
+    std::string text = previous_figure.toStdString();
+    auto it = std::sregex_token_iterator(text.cbegin(), text.cend(), number_regex, 1);
+    int figureNumber = std::stoi(*it) - 1;
+
+
+    temp->at(figureNumber)->setLineColor(QColor(24,167,181));
     scene->updateScene();
 }
 
 void MainWindow::on_pushButton_clicked() {
     if(scene->getIsSelected()){
-        scene->deleteFigure(selectedFigure, &prevFigure);
+        scene->deleteFigure(selected_figure, &previous_figure);
     }
 }
 
@@ -95,18 +111,18 @@ void MainWindow::on_actionBlue_2_triggered() {
 }
 
 void MainWindow::on_actionEllipse_triggered() {
-    figureType = 3;
+    figure_type = 3;
 }
 
 void MainWindow::on_actionRectangle_triggered() {
-    figureType = 2;
+    figure_type = 2;
 }
 
 void MainWindow::on_actionPolygon_triggered() {
-    figureType = 4;
+    figure_type = 4;
 }
 
 void MainWindow::on_actionPolyline_triggered() {
     scene->setIsPolyline(true);
-    figureType = 1;
+    figure_type = 1;
 }

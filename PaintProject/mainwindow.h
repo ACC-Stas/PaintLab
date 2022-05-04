@@ -64,8 +64,8 @@ private slots:
 private:
     Ui::MainWindow *ui;
     paintScene *scene;
-    int figureType;
-    QString selectedFigure;
-    QString prevFigure;
+    int figure_type;
+    QString selected_figure;
+    QString previous_figure;
 };
 #endif // MAINWINDOW_H
