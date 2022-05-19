@@ -61,6 +61,9 @@ private slots:
     void on_figure_types_list_activated(const QString &arg1);
 
 private:
+    void save();
+    void download(std::string filename);
+
     Ui::MainWindow *ui;
     std::unique_ptr<MakeFigure> figure_window;
     PaintScene *scene;

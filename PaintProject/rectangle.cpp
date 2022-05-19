@@ -1,4 +1,5 @@
 #include "rectangle.h"
+#include "figuretype.h"
 
 Rectangle::Rectangle(std::vector<QPointF> points, QColor line_color, QColor fill_color, int width)
 {
@@ -7,7 +8,7 @@ Rectangle::Rectangle(std::vector<QPointF> points, QColor line_color, QColor fill
     this->fill_color = fill_color;
     this->width = width;
     this->base_line_color = line_color;
-    this->figure_type = FigureType::rectangle;
+    this->figure_type = FigureType("rectangle");
 }
 
 QGraphicsItem* Rectangle::draw() {

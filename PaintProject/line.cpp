@@ -6,7 +6,7 @@ Line::Line(std::vector<QPointF> points, QColor lineColor, QColor fillColor, int 
     this->fill_color = fillColor;
     this->width = width;
     this->base_line_color = lineColor;
-    this->figure_type = FigureType::line;
+    this->figure_type = FigureType("line");
 }
 
 QGraphicsItem* Line::draw() {

@@ -4,63 +4,46 @@
 #include <string>
 #include <vector>
 #include <stdexcept>
+#include <unordered_set>
 
-enum class FigureType {
-    line = 1,
-    rectangle = 2,
-    ellipse = 3,
-    polyline = 4,
-    polygon = 5
-};
-
-class FigureTypeConverter {
+class FigureType {
 public:
-    static FigureType FromStr(const std::string& str) {
-        if (str == "line") {
-            return FigureType::line;
-        }
-
-        if (str == "rectangle") {
-            return FigureType::rectangle;
-        }
-
-        if (str == "ellipse") {
-            return FigureType::ellipse;
-        }
-
-        if (str == "polyline") {
-            return FigureType::polyline;
-        }
-
-        if (str == "polygon") {
-            return FigureType::polygon;
-        }
-        throw std::invalid_argument("No Figure type with name " + str);
+    FigureType() {
+        this->value = "no type";
     }
 
-    static std::string ToStr(const FigureType& type) {
-        switch (type) {
-        case FigureType::line: {
-            return "line";
-        }
-        case FigureType::ellipse: {
-            return "ellipse";
-        }
-
-        case FigureType::rectangle: {
-            return "rectangle";
-        }
-        case FigureType::polyline: {
-            return "polyline";
-        }
-        case FigureType::polygon: {
-            return "polygon";
-        }
-        }
-        throw std::invalid_argument("Can't convert figure type to string");
+    FigureType(std::string value) {
+        this->value = value;
     }
 
-    const static std::vector<FigureType> all;
+    std::string getValue() const {
+        return this->value;
+    }
+
+    bool operator==(const FigureType& type) const {
+        return type.getValue() == this->getValue();
+    }
+
+    bool operator!=(const FigureType& type) const {
+        return type.getValue() != this->getValue();
+    }
+
+
+    static std::unordered_set<std::string> all;
+
+private:
+    std::string value;
 };
+
+
+namespace std {
+  template <>
+  struct hash<FigureType> {
+    std::size_t operator()(const FigureType& k) const {
+      return std::hash<std::string>()(k.getValue());
+    }
+  };
+
+}
 
 #endif // FIGURETYPE_H

@@ -6,7 +6,7 @@ Polygon::Polygon(std::vector<QPointF> points, QColor line_color, QColor fill_col
     this->fill_color = fill_color;
     this->width = width;
     base_line_color = line_color;
-    this->figure_type = FigureType::polygon;
+    this->figure_type = FigureType("polygon");
 }
 
 QGraphicsItem* Polygon::draw() {

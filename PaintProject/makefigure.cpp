@@ -7,12 +7,12 @@ MakeFigure::MakeFigure(PaintScene* scene, QWidget *parent) :
     ui(new Ui::MakeFigure) {
     ui->setupUi(this);
 
-    for (const auto& figure : FigureTypeConverter::all) {
-        ui->figures_list->addItem(QString::fromStdString(FigureTypeConverter::ToStr(figure)));
+    for (const FigureType& figure : FigureType::all) {
+        ui->figures_list->addItem(QString::fromStdString(figure.getValue()));
     }
 
     this->scene = scene;
-    this->type = FigureType::line;
+    this->type = FigureType("line");
 
     ui->x_coord_line->setValidator(new QDoubleValidator(0, 1000, 15, ui->x_coord_line));
     ui->y_coord_line->setValidator(new QDoubleValidator(0, 1000, 15, ui->y_coord_line));
@@ -32,7 +32,7 @@ QSize MakeFigure::sizeHint() const {
 
 void MakeFigure::on_figures_list_activated(const QString &arg1) {
     ui->error_label->clear();
-    type = FigureTypeConverter::FromStr(arg1.toStdString());
+    type = FigureType(arg1.toStdString());
 }
 
 void MakeFigure::on_x_coord_line_textChanged(const QString &arg1) {
@@ -52,7 +52,7 @@ void MakeFigure::on_create_figure_button_clicked() {
         return;
     }
 
-    if (points.size() > 2 && (type != FigureType::polygon || type != FigureType::polyline)) {
+    if (points.size() > 2 && (type != FigureType("polygon") || type != FigureType("polyline"))) {
         ui->error_label->setText("Need 2 dots for this type");
         return;
     }

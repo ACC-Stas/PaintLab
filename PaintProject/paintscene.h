@@ -66,6 +66,7 @@ private:
     void mouseMoveEvent(QGraphicsSceneMouseEvent *event);
 
     friend class MakeFigure;
+    friend class MainWindow;
 };
 
 #endif // PAINTSCENE_H

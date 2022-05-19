@@ -28,6 +28,11 @@ SOURCES += \
     rectangle.cpp
 
 HEADERS += \
+    ICreator.h \
+    creators/LineCreator.h \
+    creators/ellipsecreator.h \
+    creators/polygoncreator.h \
+    creators/rectanglecreator.h \
     ellipse.h \
     factory.h \
     figuretype.h \

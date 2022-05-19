@@ -42,6 +42,42 @@ public:
         return fill_color;
     }
 
+    std::string serialize() {
+        std::string output;
+
+        int point_number = this->points.size();
+        output.append(std::to_string(point_number));
+        output.append("\n");
+
+        for (const auto& point : points) {
+            output.append(std::to_string(point.x()));
+            output.append("\n");
+            output.append(std::to_string(point.y()));
+            output.append("\n");
+        }
+
+        output.append(std::to_string(this->line_color.red()));
+        output.append("\n");
+        output.append(std::to_string(this->line_color.green()));
+        output.append("\n");
+        output.append(std::to_string(this->line_color.blue()));
+        output.append("\n");
+
+        output.append(std::to_string(this->fill_color.red()));
+        output.append("\n");
+        output.append(std::to_string(this->fill_color.green()));
+        output.append("\n");
+        output.append(std::to_string(this->fill_color.blue()));
+        output.append("\n");
+
+        output.append(std::to_string(this->width));
+        output.append("\n");
+        output.append(this->figure_type.getValue());
+        output.append("\n");
+
+        return output;
+    }
+
     std::vector<QPointF> points;
 };
 
